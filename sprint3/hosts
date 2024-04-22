@@ -1,0 +1,9 @@
+[srv]
+srv ansible_host=192.168.10.13 ansible_user=ubuntu
+
+[nodes]
+worker1 ansible_host=192.168.20.25 ansible_user=ubuntu
+worker2 ansible_host=192.168.30.6 ansible_user=ubuntu
+master ansible_host=192.168.30.3 ansible_user=ubuntu
+ingress ansible_host=158.160.164.226 ansible_user=ubuntu
+

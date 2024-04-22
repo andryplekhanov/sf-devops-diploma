@@ -1,0 +1,12 @@
+# DATABASE
+POSTGRES_DB=mybase
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=postgres
+
+# DJANGO
+SECRET_KEY=T0x=ycJe32@rrMn8d6N5rgjQfdFv1HhgLjqdc2PC?X=A?6?6z
+DEBUG=leave_blank_if_you_want_debug_false
+DJANGO_SUPERUSER_USERNAME=admin
+DJANGO_SUPERUSER_PASSWORD=123456qwerty
+DJANGO_SUPERUSER_EMAIL=test@example.com

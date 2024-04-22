@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgres.name }}-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      components: {{ .Values.postgres.components }}
+  template:
+    metadata:
+      labels:
+        components: {{ .Values.postgres.components }}
+    spec:
+      containers:
+        - name: {{ .Values.postgres.name }}
+          image: {{ .Values.postgres.image }}:{{ .Values.postgres.version }}
+          ports:
+            - containerPort: {{ .Values.postgres.port }}
+          env:
+            {{- range .Values.postgres.envs -}}
+            {{- $data := dict "name" $.Values.postgres.name "env" . }}
+            {{- include "env.template" $data | nindent 12 }}
+            {{- end }}
+
+          resources:
+            limits: {{ .Values.postgres.limits | toYaml | nindent 14 }}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              subPath: postgres
+              name: {{ .Values.postgres.name }}-data
+      volumes:
+        - name: {{ .Values.postgres.name }}-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgres.name }}-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postgres.name }}-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.postgres.port }}
+      protocol: TCP
+  selector:
+    components: {{ .Values.postgres.components }}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.postgres.name }}-pvc
+spec:
+  resources:
+    requests:
+      storage: {{ .Values.postgres.pvc_storage }}
+  accessModes:
+    - ReadWriteOnce

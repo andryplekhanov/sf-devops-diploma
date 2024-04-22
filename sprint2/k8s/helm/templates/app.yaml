@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}-deployment
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+      components: {{ .Values.app.components }}
+  template:
+    metadata:
+      labels:
+        components: {{ .Values.app.components }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.app.image }}:{{ .Values.app.version }}
+          command: [ '/bin/sh', '-c' ]
+          args:
+            [ 'python manage.py migrate && python manage.py collectstatic --no-input --clear && python manage.py runserver 0.0.0.0:8000' ]
+          ports:
+            - containerPort: {{ .Values.app.port }}
+          env:
+            - name: POSTGRES_HOST
+              value: {{ .Values.postgres.name }}-service
+            - name: DEBUG
+              value: {{ .Values.app.debug }}
+            {{- range .Values.app.envs -}}
+            {{- $data := dict "name" $.Values.app.name "env" . }}
+            {{- include "env.template" $data | nindent 12 }}
+            {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.app.name }}-service
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: {{ .Values.app.port }}
+      nodePort: 30000
+  selector:
+    components: {{ .Values.app.components }}
+  type: NodePort
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.app.name }}-ingress
+  annotations:
+    ingress.alb.yc.io/subnets: {{ .Values.ingress.subnet_id }}
+    ingress.alb.yc.io/external-ipv4-address: {{ .Values.ingress.ingress_ip }}
+    ingress.alb.yc.io/group-name: infra-ingress
+spec:
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.app.name }}-service
+                port:
+                  number: {{ .Values.app.port }}

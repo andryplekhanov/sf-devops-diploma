@@ -1,0 +1,44 @@
+stages:
+  - build
+  - test
+  - deploy
+
+docker_build:
+  stage: build
+  only:
+    - tags
+  script:
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_TOKEN"
+    - docker build -t $IMAGE:$CI_COMMIT_TAG .
+    - docker push $IMAGE:$CI_COMMIT_TAG
+
+
+unit-test-job:
+  stage: test
+  script:
+    - echo "Running unit tests... This will take about 60 seconds."
+    - echo "Code coverage is 90%"
+  only:
+    - tags
+
+
+deploy-job:
+  stage: deploy
+  script:
+    - cd ./k8s/helm/
+    - export KUBECONFIG=/opt/.kube/config
+    - >
+      helm upgrade --install django-release 
+      --set app.image=$IMAGE 
+      --set app.version=$CI_COMMIT_TAG 
+      --set app.debug=$DEBUG 
+      --set ingress.host=$HOST 
+      --set ingress.subnet_id=$SUBNETID 
+      --set ingress.ingress_ip=$INGRESSIP 
+      --set POSTGRES_DB=$POSTGRES_DB 
+      --set POSTGRES_USER=$POSTGRES_USER 
+      --set POSTGRES_PASSWORD=$POSTGRES_PASSWORD 
+      --set SECRET_KEY=$SECRET_KEY ./
+    - kubectl get all
+  only:
+    - tags

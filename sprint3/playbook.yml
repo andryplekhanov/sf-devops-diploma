@@ -1,0 +1,17 @@
+---
+- hosts: srv
+  become: yes
+
+  roles:
+    - role: monitoring
+      tags: mon
+    - role: logging
+      tags: log
+
+- hosts: nodes
+  become: yes
+
+  roles:
+    - role: exporters
+      tags: exporters
+

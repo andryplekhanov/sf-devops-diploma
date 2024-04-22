@@ -1,0 +1,21 @@
+---
+# tasks file for logging
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /opt/promtail
+
+- name: Copy values.yml to remote server
+  copy:
+    src: values.yml
+    dest: /opt/promtail/values.yml
+
+- name: Install helm chart
+  shell: |
+    helm repo add grafana https://grafana.github.io/helm-charts
+    helm repo update
+    helm upgrade --values values.yml --install promtail grafana/promtail -n logging --create-namespace
+  args:
+    chdir: /opt/promtail

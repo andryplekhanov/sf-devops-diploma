@@ -1,0 +1,10 @@
+scrape_configs:
+
+{% for host in groups['nodes'] %}
+  - job_name: 'node-exporter-{{ host }}'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['{{ hostvars[host]['ansible_host'] }}:9100']
+
+{% endfor %}
+

@@ -1,0 +1,43 @@
+---
+# tasks file for monitoring
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /opt/prometheus_stack
+    - /opt/prometheus_stack/prometheus
+    - /opt/prometheus_stack/grafana
+    - /opt/prometheus_stack/alertmanager
+    - /opt/prometheus_stack/blackbox
+
+- name: Copy docker-compose.yml to remote server
+  template:
+    src: docker-compose-template.j2
+    dest: /opt/prometheus_stack/docker-compose.yml
+
+- name: Copy prometheus.yml to remote server
+  copy:
+    src: prometheus.yml
+    dest: /opt/prometheus_stack/prometheus/prometheus.yml
+
+- name: Copy alert.rules to remote server
+  copy:
+    src: alert.rules
+    dest: /opt/prometheus_stack/prometheus/alert.rules
+
+- name: Copy config.yml to remote server
+  copy:
+    src: config.yml
+    dest: /opt/prometheus_stack/alertmanager/config.yml
+
+- name: Copy blackbox.yml to remote server
+  copy:
+    src: blackbox.yml
+    dest: /opt/prometheus_stack/blackbox/blackbox.yml
+
+- name: Copy exporters.yml to remote server
+  template:
+    src: exporters.yml.j2
+    dest: /opt/prometheus_stack/prometheus/exporters.yml
+  notify: Restart docker-compose

@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: web
+    build:
+      dockerfile: Dockerfile
+      context: .
+    working_dir: /app/web
+    volumes:
+      - .:/app/web
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    restart: always
+    depends_on:
+      - postgres
+    env_file: .env
+  postgres:
+    image: postgres:15.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    container_name: postgres
+    env_file: .env
+    ports:
+      - "5433:5432"
+
+volumes:
+  postgres_data:

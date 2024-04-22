@@ -1,0 +1,8 @@
+## values.yaml
+
+config:
+  # publish data to loki
+  clients:
+    - url: http://192.168.10.28:3100/loki/api/v1/push
+      tenant_id: 1
+

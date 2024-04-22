@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static 'app_main/css/test.css' %}" rel="stylesheet" type="text/css">
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+</head>
+<body>
+
+    {% include 'app_main/header.html' %}
+
+    {% block middle %}
+    {% endblock middle %}
+
+    {% include 'app_main/footer.html' %}
+
+</body>
+</html>

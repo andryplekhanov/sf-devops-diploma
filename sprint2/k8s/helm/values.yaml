@@ -1,0 +1,38 @@
+app:
+  name: app
+  debug: ${DEBUG}
+  image: ${IMAGE}
+  version: ${VERSION}
+  replicas: 1
+  components: backend
+  port: 8000
+  envs:
+    - POSTGRES_DB
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    - SECRET_KEY
+
+postgres:
+  name: postgres
+  image: postgres
+  version: 15.0-alpine
+  components: postgres
+  port: 5432
+  pvc_storage: 1Gi
+  limits:
+    memory: "500Mi"
+    cpu: "300m"
+  envs:
+    - POSTGRES_DB
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+
+ingress:
+  subnet_id: ${SUBNETID}
+  ingress_ip: ${INGRESSIP}
+  host: ${HOST}
+
+POSTGRES_DB: ${POSTGRES_DB}
+POSTGRES_USER: ${POSTGRES_USER}
+POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+SECRET_KEY: ${SECRET_KEY}

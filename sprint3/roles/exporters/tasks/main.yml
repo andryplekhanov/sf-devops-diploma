@@ -1,0 +1,26 @@
+---
+# tasks file for exporters
+- name: Install docker compose
+  ansible.builtin.apt:
+    state: present
+    update_cache: true
+    name:
+      - docker-compose-plugin
+
+- name: Create directories for node-exporter
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /opt/node-exporter
+
+- name: Copy docker-compose.yml to remote server
+  copy:
+    src: docker-compose.yml
+    dest: /opt/node-exporter/docker-compose.yml
+
+- name: Start Docker Compose services
+  command: "docker compose up -d"
+  args:
+    chdir: /opt/node-exporter
+

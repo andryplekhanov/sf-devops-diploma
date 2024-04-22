@@ -1,0 +1,6 @@
+---
+# handlers file for monitoring
+- name: Restart docker-compose
+  ansible.builtin.shell:
+    cmd: docker compose down && docker compose up -d
+    chdir: /opt/prometheus_stack
