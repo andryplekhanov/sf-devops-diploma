@@ -1,7 +1,12 @@
 # sf-devops-diploma
 
-адрес работающего приложения: http://test.andryplekhanov.ru/
+**Адрес работающего приложения:** http://test.andryplekhanov.ru/
 
+**Ссылки на этапы:**
+
+- Спринт 1: https://github.com/andryplekhanov/sf-diploma-sprint1
+- Спринт 2: https://gitlab.com/andryplekhanov/dj-project
+- Спринт 3: https://gitlab.com/andryplekhanov/monitoring
 
 <hr>
 
