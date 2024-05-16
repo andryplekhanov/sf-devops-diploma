@@ -1,6 +1,5 @@
 # sf-devops-diploma
 
-**Адрес работающего приложения:** http://test.andryplekhanov.ru/
 
 **Ссылки на этапы:**
 
